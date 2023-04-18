@@ -44,16 +44,16 @@ def increase_unique_product_stock(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
 
+    updated_stock = product.stock + new_stock.stock_increase
+
     if product is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="the product with id {id} does not exist",
         )
 
-    product_query.update().where(Products.id == 5).values(stock=new_stock.stock)
-
+    product_query.update({"stock": updated_stock})
     db.commit()
-    updated_product = product_query = (
-        db.query(Products).filter(Products.id == id).first()
-    )
+    updated_product = db.query(Products).filter(Products.id == id).first()
+
     return updated_product

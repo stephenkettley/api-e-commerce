@@ -29,4 +29,9 @@ class ShowProductStock(BaseModel):
 class UpdateProductStock(BaseModel):
     """Pydantic model for updating stock of products."""
 
-    stock: int
+    stock_increase: int
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
