@@ -1,5 +1,6 @@
-from database_connection import Base
 from sqlalchemy import Column, Float, Integer, String
+
+from src.database.database_connection import Base
 
 
 class Products(Base):
@@ -10,7 +11,7 @@ class Products(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, unique=True, nullable=False)
     price = Column(Float, nullable=False)
-    stock = Column(Integer, default=0)
+    stock = Column(Integer, server_default="0")
 
 
 class Users(Base):
@@ -22,4 +23,4 @@ class Users(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
-    total_spent = Column(Float, default=0)
+    total_spent = Column(Float, server_default="0")

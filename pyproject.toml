@@ -10,6 +10,7 @@ packages = [{include = "api_e_commerce"}]
 python = "^3.10"
 psycopg2 = "^2.9.6"
 sqlalchemy = "^2.0.9"
+fastapi = "^0.95.1"
 
 
 [tool.poetry.group.dev.dependencies]
