@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from src.database.database_connection import get_db
 from src.database.models import Products
 from src.routers.schemas.product import (
+    ProductAll,
     ProductBase,
     ShowProductStock,
     UpdateProductStock,
@@ -15,8 +16,8 @@ router = APIRouter(
 )
 
 
-@router.get("/all", status_code=status.HTTP_200_OK, response_model=list[ProductBase])
-def get_all_products(db: Session = Depends(get_db)) -> list[ProductBase]:
+@router.get("/all", status_code=status.HTTP_200_OK, response_model=list[ProductAll])
+def get_all_products(db: Session = Depends(get_db)) -> list[ProductAll]:
     """Get all products from database."""
     products = db.query(Products).all()
     return products
@@ -59,14 +60,13 @@ def increase_unique_product_stock(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
 
-    updated_stock = product.stock + new_stock.stock_increase
-
     if product is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"the product with id {id} does not exist",
         )
 
+    updated_stock = product.stock + new_stock.stock_increase
     product_query.update({"stock": updated_stock})
     db.commit()
     updated_product = db.query(Products).filter(Products.id == id).first()
