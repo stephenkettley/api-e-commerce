@@ -24,3 +24,4 @@ class Users(Base):
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
     total_spent = Column(Float, server_default="0")
+    coupon_count = Column(Integer, server_default="0")
