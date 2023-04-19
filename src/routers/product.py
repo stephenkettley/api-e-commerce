@@ -22,6 +22,21 @@ def get_all_products(db: Session = Depends(get_db)) -> list[ProductBase]:
     return products
 
 
+@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=ProductBase)
+def get_unique_product(id: int, db: Session = Depends(get_db)) -> ProductBase:
+    """Get a unique product from database."""
+    product_query = db.query(Products).filter(Products.id == id)
+    product = product_query.first()
+
+    if product is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"the product with id {id} does not exist",
+        )
+
+    return product
+
+
 @router.post("/create", status_code=status.HTTP_201_CREATED, response_model=ProductBase)
 def create_new_product(
     product: ProductBase, db: Session = Depends(get_db)
@@ -49,7 +64,7 @@ def increase_unique_product_stock(
     if product is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="the product with id {id} does not exist",
+            detail=f"the product with id {id} does not exist",
         )
 
     product_query.update({"stock": updated_stock})
