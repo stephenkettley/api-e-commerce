@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from src.database.database_connection import Base
 
@@ -28,3 +29,18 @@ class Users(Base):
     coupon_count = Column(Integer, server_default="0")
     number_of_items_in_current_basket = Column(Integer, server_default="0")
     total_cost_of_current_basket = Column(Float, server_default="0")
+
+    # shopper = relationship("Baskets", back_populates="basket_items")
+
+
+class Baskets(Base):
+    """Model for postgrest table called 'baskets'."""
+
+    __tablename__ = "baskets"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    quantity = Column(Integer, nullable=False)
+
+    # basked_items = relationship("Users", back_populates="shopper")
