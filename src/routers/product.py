@@ -6,7 +6,10 @@ from src.database.models import Products
 from src.routers.schemas.product import (
     ProductAll,
     ProductBase,
+    ProductCreate,
     ShowProductStock,
+    UpdateProductPrice,
+    UpdateProductSalePercentage,
     UpdateProductStock,
 )
 
@@ -40,7 +43,7 @@ def get_unique_product(id: int, db: Session = Depends(get_db)) -> ProductBase:
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, response_model=ProductBase)
 def create_new_product(
-    product: ProductBase, db: Session = Depends(get_db)
+    product: ProductCreate, db: Session = Depends(get_db)
 ) -> ProductBase:
     """Create a new product in the database."""
     new_product = Products(name=product.name, price=product.price, stock=product.stock)
@@ -54,7 +57,7 @@ def create_new_product(
     "/stock/{id}", status_code=status.HTTP_200_OK, response_model=ShowProductStock
 )
 def increase_unique_product_stock(
-    id: int, new_stock: UpdateProductStock, db: Session = Depends(get_db)
+    id: int, stock: UpdateProductStock, db: Session = Depends(get_db)
 ) -> ShowProductStock:
     """Increase the stock of a unique product."""
     product_query = db.query(Products).filter(Products.id == id)
@@ -66,8 +69,50 @@ def increase_unique_product_stock(
             detail=f"the product with id {id} does not exist",
         )
 
-    updated_stock = product.stock + new_stock.stock_increase
+    updated_stock = product.stock + stock.stock_increase
     product_query.update({"stock": updated_stock})
+    db.commit()
+    updated_product = db.query(Products).filter(Products.id == id).first()
+
+    return updated_product
+
+
+@router.put("/price/{id}", status_code=status.HTTP_200_OK, response_model=ProductBase)
+def update_unique_product_price(
+    id: int, price: UpdateProductPrice, db: Session = Depends(get_db)
+) -> ProductBase:
+    """Update price of a unique product."""
+    product_query = db.query(Products).filter(Products.id == id)
+    product = product_query.first()
+
+    if product is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"the product with id {id} does not exist",
+        )
+
+    product_query.update({"price": price.new_price})
+    db.commit()
+    updated_product = db.query(Products).filter(Products.id == id).first()
+
+    return updated_product
+
+
+@router.put("/sale/{id}", status_code=status.HTTP_200_OK, response_model=ProductBase)
+def put_unique_product_on_sale(
+    id: int, sale: UpdateProductSalePercentage, db: Session = Depends(get_db)
+) -> ProductBase:
+    """Update the sale percentage of a unique product."""
+    product_query = db.query(Products).filter(Products.id == id)
+    product = product_query.first()
+
+    if product is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"the product with id {id} does not exist",
+        )
+
+    product_query.update({"sale_percentage": sale.sale_percentage})
     db.commit()
     updated_product = db.query(Products).filter(Products.id == id).first()
 
