@@ -12,6 +12,7 @@ class Products(Base):
     name = Column(String, unique=True, nullable=False)
     price = Column(Float, nullable=False)
     stock = Column(Integer, server_default="0")
+    sale_percentage = Column(Integer, server_default="0")
 
 
 class Users(Base):
@@ -23,5 +24,7 @@ class Users(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
-    total_spent = Column(Float, server_default="0")
+    total_spent_overall = Column(Float, server_default="0")
     coupon_count = Column(Integer, server_default="0")
+    number_of_items_in_current_basket = Column(Integer, server_default="0")
+    total_cost_of_current_basket = Column(Float, server_default="0")
