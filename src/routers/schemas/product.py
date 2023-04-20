@@ -7,6 +7,20 @@ class ProductBase(BaseModel):
     name: str
     price: float
     stock: int
+    sale_percentage: int
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+
+class ProductCreate(BaseModel):
+    """Pydantic model for creating a new product."""
+
+    name: str
+    price: float
+    stock: int
 
     class Config:
         """ORM config class."""
@@ -41,6 +55,28 @@ class UpdateProductStock(BaseModel):
     """Pydantic model for updating stock of products."""
 
     stock_increase: int
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+
+class UpdateProductPrice(BaseModel):
+    """Pydantic model for updating price of products."""
+
+    new_price: float
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+
+class UpdateProductSalePercentage(BaseModel):
+    """Pydantic model for updating sale percentage of products."""
+
+    sale_percentage: int
 
     class Config:
         """ORM config class."""
