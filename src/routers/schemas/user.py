@@ -6,8 +6,10 @@ class UserBase(BaseModel):
 
     name: str
     email: str
-    total_spent: float
+    total_spent_overall: float
     coupon_count: int
+    number_of_items_in_current_basket: int
+    total_cost_of_current_basket: float
 
     class Config:
         """ORM config class."""
@@ -32,3 +34,20 @@ class UserCreate(BaseModel):
     name: str
     email: str
     password: str
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+
+class UserUpdate(BaseModel):
+    """Pydantic model for updating user information."""
+
+    name: str
+    email: str
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
