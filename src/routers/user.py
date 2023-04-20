@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.database.database_connection import get_db
 from src.database.models import Users
 from src.database.password_hashing import Bcrypt
-from src.routers.schemas.user import UserAll, UserBase, UserCreate
+from src.routers.schemas.user import UserAll, UserBase, UserCreate, UserUpdate
 
 router = APIRouter(
     prefix="/user",
@@ -44,3 +44,38 @@ def create_new_user(user: UserCreate, db: Session = Depends(get_db)) -> UserBase
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+@router.put("/{id}", status_code=status.HTTP_200_OK, response_model=UserBase)
+def update_unique_user_information(
+    id: int, user_update: UserUpdate, db: Session = Depends(get_db)
+) -> UserBase:
+    """Update basic user information."""
+    user_query = db.query(Users).filter(Users.id == id)
+    user = user_query.first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"the user with id {id} does not exist",
+        )
+
+    user_query.update({"name": user_update.name, "email": user_update.email})
+    db.commit()
+    updated_user = db.query(Users).filter(Users.id == id).first()
+
+    return updated_user
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_unique_user(id: int, db: Session = Depends(get_db)) -> None:
+    """Delete a unique user."""
+    fetched_user = db.query(Users).filter(Users.id == id)
+    if not fetched_user.first():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"user with id {id} does not exist for deletion",
+        )
+    else:
+        fetched_user.delete(synchronize_session=False)
+        db.commit()
