@@ -20,9 +20,9 @@ def does_user_have_enough_coupons(
 def get_total_cost_of_basket(basket_products: list) -> float:
     """Gets the total price of a basket of products with different quantities."""
     total_basket_cost = 0
+
     for product in basket_products:
         total_basket_cost += get_total_cost_of_product(product=product)
-
     return total_basket_cost
 
 
