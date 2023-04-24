@@ -27,10 +27,7 @@ class Users(Base):
     hashed_password = Column(String, nullable=False)
     total_spent_overall = Column(Float, server_default="0")
     coupon_count = Column(Integer, server_default="0")
-    number_of_items_in_current_basket = Column(Integer, server_default="0")
-    total_cost_of_current_basket = Column(Float, server_default="0")
-
-    # shopper = relationship("Baskets", back_populates="basket_items")
+    basket_items = relationship("Baskets")
 
 
 class Baskets(Base):
@@ -39,8 +36,10 @@ class Baskets(Base):
     __tablename__ = "baskets"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="cascade"), nullable=False
+    )
+    product_id = Column(
+        Integer, ForeignKey("products.id", ondelete="cascade"), nullable=False
+    )
     quantity = Column(Integer, nullable=False)
-
-    # basked_items = relationship("Users", back_populates="shopper")

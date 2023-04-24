@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.database.database_connection import get_db
 from src.database.models import Products
+from src.repository.product import does_product_exist_in_database
 from src.routers.schemas.product import (
     ProductAll,
     ProductBase,
@@ -32,11 +33,7 @@ def get_unique_product(id: int, db: Session = Depends(get_db)) -> ProductBase:
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
 
-    if product is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"the product with id {id} does not exist",
-        )
+    does_product_exist_in_database(product=product)
 
     return product
 
@@ -63,11 +60,7 @@ def increase_unique_product_stock(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
 
-    if product is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"the product with id {id} does not exist",
-        )
+    does_product_exist_in_database(product=product)
 
     updated_stock = product.stock + stock.stock_increase
     product_query.update({"stock": updated_stock})
@@ -85,11 +78,7 @@ def update_unique_product_price(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
 
-    if product is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"the product with id {id} does not exist",
-        )
+    does_product_exist_in_database(product=product)
 
     product_query.update({"price": price.new_price})
     db.commit()
@@ -106,14 +95,22 @@ def put_unique_product_on_sale(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
 
-    if product is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"the product with id {id} does not exist",
-        )
+    does_product_exist_in_database(product=product)
 
     product_query.update({"sale_percentage": sale.sale_percentage})
     db.commit()
     updated_product = db.query(Products).filter(Products.id == id).first()
 
     return updated_product
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_unique_product(id: int, db: Session = Depends(get_db)) -> None:
+    """Delete a unique product."""
+    product_query = db.query(Products).filter(Products.id == id)
+    product = product_query.first()
+
+    does_product_exist_in_database(product=product)
+
+    product_query.delete(synchronize_session=False)
+    db.commit()

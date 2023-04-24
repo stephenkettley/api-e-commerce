@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from src.routers.schemas.basket import BasketProduct
+
 
 class UserBase(BaseModel):
     """Pydantic model for showing basic user information."""
@@ -8,8 +10,6 @@ class UserBase(BaseModel):
     email: str
     total_spent_overall: float
     coupon_count: int
-    number_of_items_in_current_basket: int
-    total_cost_of_current_basket: float
 
     class Config:
         """ORM config class."""
@@ -46,6 +46,21 @@ class UserUpdate(BaseModel):
 
     name: str
     email: str
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+
+class UserUnique(BaseModel):
+    """Pydantic model for showing a unique user."""
+
+    name: str
+    email: str
+    total_spent_overall: float
+    coupon_count: int
+    basket_items: list[BasketProduct]
 
     class Config:
         """ORM config class."""
