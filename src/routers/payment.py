@@ -5,6 +5,7 @@ from src.database.database_connection import get_db
 from src.database.models import Baskets, Products, Users
 from src.repository.payment import (
     does_user_have_enough_coupons,
+    get_total_cost_of_basket,
     get_total_cost_of_product,
     has_user_paid_the_right_amount,
 )
@@ -40,8 +41,7 @@ def pay_for_unique_basket(
 
     does_user_have_enough_coupons(payment=payment, user=user)
 
-    for product in basket_products:
-        total_basket_cost += get_total_cost_of_product(product=product)
+    total_basket_cost = get_total_cost_of_basket(basket_products=basket_products)
 
     has_user_paid_the_right_amount(
         payment=payment,
