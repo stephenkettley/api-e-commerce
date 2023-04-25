@@ -11,3 +11,10 @@ class PaymentBase(BaseModel):
         """ORM config class."""
 
         orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "payment_amount": "3500",
+                "coupons_to_use": 3,
+            }
+        }

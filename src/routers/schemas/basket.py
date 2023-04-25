@@ -13,6 +13,14 @@ class BasketsBase(BaseModel):
 
         orm_mode = True
 
+    schema_extra = {
+        "example": {
+            "user_id": 4,
+            "product_id": 3,
+            "quantity": 20,
+        }
+    }
+
 
 class DeleteBasketProduct(BaseModel):
     """Pydantic model for deleting product from a user basket."""

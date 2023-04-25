@@ -40,6 +40,14 @@ class UserCreate(BaseModel):
 
         orm_mode = True
 
+        schema_extra = {
+            "example": {
+                "name": "Stephen Kettley",
+                "email": "stephenkettley@gmail.com",
+                "password": "password123",
+            }
+        }
+
 
 class UserUpdate(BaseModel):
     """Pydantic model for updating user information."""
@@ -51,6 +59,13 @@ class UserUpdate(BaseModel):
         """ORM config class."""
 
         orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "name": "John Smith",
+                "email": "johnsmith@gmail.com",
+            }
+        }
 
 
 class UserUnique(BaseModel):
