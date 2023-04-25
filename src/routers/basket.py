@@ -8,19 +8,21 @@ from src.repository.user import does_user_exist_in_database
 from src.routers.schemas.basket import BasketsBase, DeleteBasketProduct
 
 router = APIRouter(
-    prefix="/baskets",
+    prefix="/basket",
     tags=["Baskets"],
 )
 
 
 @router.get("/all", status_code=status.HTTP_200_OK, response_model=list[BasketsBase])
-def get_all_basket_items(db: Session = Depends(get_db)) -> list[BasketsBase]:
+def get_all_basket_items_for_all_users(
+    db: Session = Depends(get_db),
+) -> list[BasketsBase]:
     """Get all basket items from database."""
     basket_items = db.query(Baskets).all()
     return basket_items
 
 
-@router.post("/create", status_code=status.HTTP_201_CREATED, response_model=BasketsBase)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=BasketsBase)
 def create_new_basket_item(
     basket_item: BasketsBase, db: Session = Depends(get_db)
 ) -> BasketsBase:

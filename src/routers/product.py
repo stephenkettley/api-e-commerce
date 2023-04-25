@@ -38,7 +38,7 @@ def get_unique_product(id: int, db: Session = Depends(get_db)) -> ProductBase:
     return product
 
 
-@router.post("/create", status_code=status.HTTP_201_CREATED, response_model=ProductBase)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=ProductBase)
 def create_new_product(
     product: ProductCreate, db: Session = Depends(get_db)
 ) -> ProductBase:

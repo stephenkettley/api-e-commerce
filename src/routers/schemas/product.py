@@ -14,6 +14,15 @@ class ProductBase(BaseModel):
 
         orm_mode = True
 
+        schema_extra = {
+            "example": {
+                "name": "Apple MacBook Pro M2",
+                "price": 45000,
+                "stock": 250,
+                "sale_percentage": 25,
+            }
+        }
+
 
 class ProductCreate(BaseModel):
     """Pydantic model for creating a new product."""
@@ -57,6 +66,13 @@ class ShowProductStock(BaseModel):
         """ORM config class."""
 
         orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "name": "Apple iPhone 14 Pro",
+                "stock": 120,
+            }
+        }
 
 
 class UpdateProductStock(BaseModel):

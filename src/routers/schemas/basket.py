@@ -13,13 +13,13 @@ class BasketsBase(BaseModel):
 
         orm_mode = True
 
-    schema_extra = {
-        "example": {
-            "user_id": 4,
-            "product_id": 3,
-            "quantity": 20,
+        schema_extra = {
+            "example": {
+                "user_id": 4,
+                "product_id": 3,
+                "quantity": 20,
+            }
         }
-    }
 
 
 class DeleteBasketProduct(BaseModel):
@@ -32,6 +32,12 @@ class DeleteBasketProduct(BaseModel):
 
         orm_mode = True
 
+        schema_extra = {
+            "example": {
+                "product_id": 3,
+            }
+        }
+
 
 class BasketProduct(BaseModel):
     """Pydantic model for displaying product in user's basket."""
@@ -42,3 +48,9 @@ class BasketProduct(BaseModel):
         """ORM config class."""
 
         orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "product_id": 3,
+            }
+        }

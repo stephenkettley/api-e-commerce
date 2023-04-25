@@ -38,7 +38,7 @@ def get_unique_user(id: int, db: Session = Depends(get_db)) -> UserUnique:
     return user
 
 
-@router.post("/create", status_code=status.HTTP_201_CREATED, response_model=UserBase)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=UserBase)
 def create_new_user(user: UserCreate, db: Session = Depends(get_db)) -> UserBase:
     """Create a new product in the database."""
     bcrypt_hasher = Bcrypt()

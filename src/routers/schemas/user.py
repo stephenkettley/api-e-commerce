@@ -16,6 +16,15 @@ class UserBase(BaseModel):
 
         orm_mode = True
 
+        schema_extra = {
+            "example": {
+                "name": "Adam Jones",
+                "email": "adamjones@gmail.com",
+                "total_spent_overall": 2500,
+                "coupon_count": 12,
+            }
+        }
+
 
 class UserAll(UserBase):
     """Pydantic model for showing all users."""
@@ -26,6 +35,16 @@ class UserAll(UserBase):
         """ORM config class."""
 
         orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "name": "Adam Jones",
+                "email": "adamjones@gmail.com",
+                "total_spent_overall": 2500,
+                "coupon_count": 12,
+                "id": 2,
+            }
+        }
 
 
 class UserCreate(BaseModel):
@@ -81,3 +100,16 @@ class UserUnique(BaseModel):
         """ORM config class."""
 
         orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "name": "Miles Teller",
+                "email": "milesteller@gmail.com",
+                "total_spent_overall": 120000,
+                "coupon_count": 35,
+                "basket_items": [
+                    {"product_id": 2},
+                    {"product_id": 4},
+                ],
+            }
+        }

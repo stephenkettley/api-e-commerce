@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.post("/{id}", status_code=status.HTTP_200_OK, response_model=UserUnique)
-def pay_for_unique_basket(
+def pay_for_unique_user_basket(
     id: int, payment: PaymentBase, db: Session = Depends(get_db)
 ) -> UserUnique:
     """Pay for unique user's basket."""
