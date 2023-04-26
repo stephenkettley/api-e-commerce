@@ -5,7 +5,7 @@ from src.database.database_connection import get_db
 from src.database.models import Baskets, Products, Users
 from src.repository.product import does_product_exist_in_database
 from src.repository.user import does_user_exist_in_database
-from src.routers.schemas.basket import BasketsBase, DeleteBasketProduct
+from src.routers.schemas.basket import BasketCreate, BasketsBase, DeleteBasketProduct
 
 router = APIRouter(
     prefix="/basket",
@@ -22,29 +22,47 @@ def get_all_basket_items_for_all_users(
     return basket_items
 
 
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=BasketsBase)
+@router.post("/{id}", status_code=status.HTTP_201_CREATED, response_model=BasketsBase)
 def create_new_basket_item(
-    basket_item: BasketsBase, db: Session = Depends(get_db)
+    id: int, new_item: BasketCreate, db: Session = Depends(get_db)
 ) -> BasketsBase:
     """Create a new basket item."""
-    user_query = db.query(Users).filter(Users.id == basket_item.user_id)
+    user_query = db.query(Users).filter(Users.id == id)
     user = user_query.first()
     does_user_exist_in_database(user=user)
 
-    product_query = db.query(Products).filter(Products.id == basket_item.product_id)
+    product_query = db.query(Products).filter(Products.id == new_item.product_id)
     product = product_query.first()
     does_product_exist_in_database(product=product)
 
-    new_basket_item = Baskets(
-        user_id=basket_item.user_id,
-        product_id=basket_item.product_id,
-        quantity=basket_item.quantity,
+    basket_item_query = (
+        db.query(Baskets)
+        .filter(Baskets.user_id == id)
+        .filter(Baskets.product_id == new_item.product_id)
     )
-    db.add(new_basket_item)
-    db.commit()
-    db.refresh(new_basket_item)
+    basket_item = basket_item_query.first()
 
-    return new_basket_item
+    if basket_item is None:
+        new_basket_item = Baskets(
+            user_id=id,
+            product_id=new_item.product_id,
+            quantity=new_item.quantity,
+        )
+        db.add(new_basket_item)
+        db.commit()
+        db.refresh(new_basket_item)
+        return new_basket_item
+
+    else:
+        basket_item_query.update({"quantity": basket_item.quantity + new_item.quantity})
+        db.commit()
+        basket_item_query = (
+            db.query(Baskets)
+            .filter(Baskets.user_id == id)
+            .filter(Baskets.product_id == new_item.product_id)
+        )
+        updated_basket_item = basket_item_query.first()
+        return updated_basket_item
 
 
 @router.get("/{id}", status_code=status.HTTP_200_OK)

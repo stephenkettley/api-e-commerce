@@ -54,3 +54,17 @@ class BasketProduct(BaseModel):
                 "product_id": 3,
             }
         }
+
+
+class BasketCreate(BaseModel):
+    """Pydantic model for creating a new basket item."""
+
+    product_id: int
+    quantity: int
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+        schema_extra = {"example": {"product_id": 3, "quantity": 30}}
