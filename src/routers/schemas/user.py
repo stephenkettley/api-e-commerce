@@ -113,3 +113,22 @@ class UserUnique(BaseModel):
                 ],
             }
         }
+
+
+class UserLogin(BaseModel):
+    """Pydantic model for user login."""
+
+    email: str
+    password: str
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "email": "John Smith",
+                "password": "johnsmith@gmail.com",
+            }
+        }

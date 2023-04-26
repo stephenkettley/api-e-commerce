@@ -30,3 +30,8 @@ class Scrypt(PasswordHasher):
         """Generates hashed password using scrypt."""
         hashed_password = pwd_cxt_scrypt.hash(password)
         return hashed_password
+
+
+def verify_login_password(plain_password: str, hashed_password: str) -> bool:
+    """Verifies that two passwords are equal."""
+    return pwd_cxt_bcrypt.verify(plain_password, hashed_password)
