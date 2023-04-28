@@ -1,18 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.database.database_connection import get_db
 from src.database.models import Users
 from src.database.password_hashing import verify_login_password
-from src.routers.schemas.user import UserLogin
+from src.repository.authentication import create_encoded_jwt_access_token
+from src.routers.schemas.authentication import Token
 
 router = APIRouter(tags=["Authentication"])
 
 
-@router.post("/login")
-def user_login(user_credentials: UserLogin, db: Session = Depends(get_db)) -> dict:
+@router.post("/login", response_model=Token)
+def user_login(
+    user_credentials: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+) -> Token:
     """Validate a user login."""
-    user_query = db.query(Users).filter(Users.email == user_credentials.email)
+    user_query = db.query(Users).filter(Users.email == user_credentials.username)
     user = user_query.first()
 
     if not user:
@@ -27,4 +32,9 @@ def user_login(user_credentials: UserLogin, db: Session = Depends(get_db)) -> di
             detail="invalid credentials",
         )
 
-    return {"token": "here is your token"}
+    encoded_jwt_access_token = create_encoded_jwt_access_token(data={"data": user.id})
+
+    return {
+        "access_token": encoded_jwt_access_token,
+        "token_type": "bearer",
+    }
