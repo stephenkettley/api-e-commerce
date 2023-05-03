@@ -1,17 +1,21 @@
+from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.database.database_connection import get_db
-from src.database.models import Baskets, Products, Users
+from src.database.models import Baskets, Users
+from src.repository.authentication import get_current_user, validate_correct_user
 from src.repository.payment import (
     does_user_have_enough_coupons,
     get_total_cost_of_basket,
-    get_total_cost_of_product,
     has_user_paid_the_right_amount,
+    is_basket_empty,
 )
 from src.repository.user import does_user_exist_in_database
 from src.routers.schemas.payment import PaymentBase
 from src.routers.schemas.user import UserUnique
+
+load_dotenv()
 
 router = APIRouter(
     prefix="/payment",
@@ -21,23 +25,21 @@ router = APIRouter(
 
 @router.post("/{id}", status_code=status.HTTP_200_OK, response_model=UserUnique)
 def pay_for_unique_user_basket(
-    id: int, payment: PaymentBase, db: Session = Depends(get_db)
+    id: int,
+    payment: PaymentBase,
+    db: Session = Depends(get_db),
+    current_user: Users = Depends(get_current_user),
 ) -> UserUnique:
     """Pay for unique user's basket."""
-    total_basket_cost = 0
+    validate_correct_user(id=id, current_user_id=current_user.id)
 
     user_query = db.query(Users).filter(Users.id == id)
     user = user_query.first()
-    does_user_exist_in_database(user=user)
 
     basket_query = db.query(Baskets).filter(Baskets.user_id == id)
     basket_products = basket_query.all()
 
-    if not basket_products:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"user with id {id} has no basket items!",
-        )
+    is_basket_empty(basket_products=basket_products)
 
     does_user_have_enough_coupons(payment=payment, user=user)
 

@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from src.database.database_connection import Base, engine
 from src.routers import authentication, basket, payment, product, user
 
-Base.metadata.create_all(bind=engine)  # creates all tables in postgres
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 

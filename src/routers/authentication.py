@@ -22,17 +22,19 @@ def user_login(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="invalid credentials",
         )
 
     if not verify_login_password(user_credentials.password, user.hashed_password):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="invalid credentials",
         )
 
-    encoded_jwt_access_token = create_encoded_jwt_access_token(data={"data": user.id})
+    encoded_jwt_access_token = create_encoded_jwt_access_token(
+        data={"user_id": user.id}
+    )
 
     return {
         "access_token": encoded_jwt_access_token,
