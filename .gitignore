@@ -2,7 +2,7 @@
 .env
 .DS_Store
 .coverage
-
+.ini
 # Directories
 .venv/
 .vscode/
