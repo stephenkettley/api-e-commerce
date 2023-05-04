@@ -16,6 +16,7 @@ psycopg2-binary = "^2.9.6"
 httpx = "^0.24.0"
 passlib = "^1.7.4"
 python-multipart = "^0.0.6"
+pytest = "^7.3.1"
 
 
 [tool.poetry.group.dev.dependencies]

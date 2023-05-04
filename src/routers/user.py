@@ -52,7 +52,7 @@ def get_unique_user(
     return user
 
 
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=UserBase)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserBase)
 def create_new_user(
     new_user: UserCreate,
     db: Session = Depends(get_db),
