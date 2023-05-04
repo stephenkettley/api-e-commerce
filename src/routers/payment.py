@@ -1,17 +1,16 @@
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from src.database.database_connection import get_db
-from src.database.models import Baskets, Users
+from src.database.models import Baskets, Products, Users
 from src.repository.authentication import get_current_user, validate_correct_user
 from src.repository.payment import (
     does_user_have_enough_coupons,
-    get_total_cost_of_basket,
+    get_total_cost_of_product,
     has_user_paid_the_right_amount,
     is_basket_empty,
 )
-from src.repository.user import does_user_exist_in_database
 from src.routers.schemas.payment import PaymentBase
 from src.routers.schemas.user import UserUnique
 
@@ -38,12 +37,17 @@ def pay_for_unique_user_basket(
 
     basket_query = db.query(Baskets).filter(Baskets.user_id == id)
     basket_products = basket_query.all()
-
     is_basket_empty(basket_products=basket_products)
 
     does_user_have_enough_coupons(payment=payment, user=user)
+    total_basket_cost = 0
 
-    total_basket_cost = get_total_cost_of_basket(basket_products=basket_products)
+    for basket_item in basket_products:
+        product_query = db.query(Products).filter(Products.id == basket_item.product_id)
+        product = product_query.first()
+        total_basket_cost += get_total_cost_of_product(
+            product=product, basket_item=basket_item
+        )
 
     has_user_paid_the_right_amount(
         payment=payment,

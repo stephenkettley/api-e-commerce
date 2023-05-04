@@ -1,7 +1,5 @@
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
 
-from src.database.database_connection import get_db
 from src.database.models import Users
 
 

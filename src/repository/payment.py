@@ -1,8 +1,6 @@
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
 
-from src.database.database_connection import get_db
-from src.database.models import Baskets, Products, Users
+from src.database.models import Baskets, Users
 from src.routers.schemas.payment import PaymentBase
 
 
@@ -17,21 +15,9 @@ def does_user_have_enough_coupons(
         )
 
 
-def get_total_cost_of_basket(basket_products: list) -> float:
-    """Gets the total price of a basket of products with different quantities."""
-    total_basket_cost = 0
-
-    for product in basket_products:
-        total_basket_cost += get_total_cost_of_product(product=product)
-    return total_basket_cost
-
-
-def get_total_cost_of_product(product: Baskets, db: Session = Depends(get_db)) -> float:
+def get_total_cost_of_product(product: Baskets, basket_item: Baskets) -> float:
     """Gets the total cost of a quantity of a specific product in user basket."""
-    product_query = db.query(Products).filter(Products.id == product.product_id)
-    product = product_query.first()
-
-    product_quantity = product.quantity
+    product_quantity = basket_item.quantity
 
     total_cost_of_item = (
         product.price - product.price * (product.sale_percentage / 100)

@@ -1,6 +1,3 @@
-import os
-
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
@@ -17,8 +14,6 @@ from src.routers.schemas.product import (
     UpdateProductSalePercentage,
     UpdateProductStock,
 )
-
-load_dotenv()
 
 router = APIRouter(
     prefix="/product",
