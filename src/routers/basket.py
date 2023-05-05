@@ -1,7 +1,5 @@
-import os
-
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from src.database.database_connection import get_db
@@ -10,10 +8,9 @@ from src.repository.authentication import (
     get_current_user,
     validate_correct_user,
     validate_correct_user_or_admin,
-    validate_user_as_admin,
 )
+from src.repository.basket import does_product_exist_in_user_basket
 from src.repository.product import does_product_exist_in_database, is_there_enough_stock
-from src.repository.user import does_user_exist_in_database
 from src.routers.schemas.basket import BasketCreate, BasketsBase, DeleteBasketProduct
 
 load_dotenv()
@@ -43,9 +40,6 @@ def create_new_basket_item(
 ) -> BasketsBase:
     """Create a new basket item."""
     validate_correct_user(id=id, current_user_id=current_user.id)
-
-    user_query = db.query(Users).filter(Users.id == id)
-    user = user_query.first()
 
     product_query = db.query(Products).filter(Products.id == new_item.product_id)
     product = product_query.first()
@@ -106,10 +100,6 @@ def get_unique_user_basket_information(
         "total_cost_of_basket": 0,
     }
 
-    user_query = db.query(Users).filter(Users.id == id)
-    user = user_query.first()
-    does_user_exist_in_database(user=user)
-
     basket_query = db.query(Baskets).filter(Baskets.user_id == id).all()
 
     for item in basket_query:
@@ -145,12 +135,8 @@ def delete_unique_user_basket_item(
     basket_product_query = basket_query.filter(
         Baskets.product_id == product_id.product_id
     )
+    basket_product = basket_product_query.first()
+    does_product_exist_in_user_basket(basket_product=basket_product)
 
-    if not basket_product_query.first():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"user with id {id} has no basket item with id {product_id.product_id}",
-        )
-    else:
-        basket_product_query.delete(synchronize_session=False)
-        db.commit()
+    basket_product_query.delete(synchronize_session=False)
+    db.commit()
