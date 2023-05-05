@@ -40,12 +40,3 @@ def has_user_paid_the_right_amount(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
             detail="You have paid too little!",
         )
-
-
-def is_basket_empty(basket_products: list) -> None:
-    """Checks if a user's basket is empty."""
-    if not basket_products:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"user with id {id} has no basket items!",
-        )

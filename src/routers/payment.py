@@ -5,11 +5,11 @@ from sqlalchemy.orm import Session
 from src.database.database_connection import get_db
 from src.database.models import Baskets, Products, Users
 from src.repository.authentication import get_current_user, validate_correct_user
+from src.repository.basket import is_basket_empty
 from src.repository.payment import (
     does_user_have_enough_coupons,
     get_total_cost_of_product,
     has_user_paid_the_right_amount,
-    is_basket_empty,
 )
 from src.routers.schemas.payment import PaymentBase
 from src.routers.schemas.user import UserUnique
@@ -37,9 +37,10 @@ def pay_for_unique_user_basket(
 
     basket_query = db.query(Baskets).filter(Baskets.user_id == id)
     basket_products = basket_query.all()
-    is_basket_empty(basket_products=basket_products)
 
+    is_basket_empty(basket_products=basket_products)
     does_user_have_enough_coupons(payment=payment, user=user)
+
     total_basket_cost = 0
 
     for basket_item in basket_products:
@@ -58,7 +59,7 @@ def pay_for_unique_user_basket(
     user_query.update(
         {
             "total_spent_overall": user.total_spent_overall + payment.payment_amount,
-            "coupon_count": user.coupon_count + new_coupons,
+            "coupon_count": user.coupon_count - payment.coupons_to_use + new_coupons,
         }
     )
     db.commit()
