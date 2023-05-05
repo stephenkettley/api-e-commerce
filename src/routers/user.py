@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from src.database.database_connection import get_db
@@ -11,6 +11,7 @@ from src.repository.authentication import (
     validate_correct_user_or_admin,
     validate_user_as_admin,
 )
+from src.repository.user import does_user_already_exist
 from src.routers.schemas.user import (
     UserAll,
     UserBase,
@@ -27,11 +28,11 @@ router = APIRouter(
 )
 
 
-@router.get("/all", status_code=status.HTTP_200_OK, response_model=list[UserAll])
+@router.get("/all", status_code=status.HTTP_200_OK, response_model=list[UserBase])
 def get_all_users(
     db: Session = Depends(get_db),
     current_user: int = Depends(get_current_user),
-) -> list[UserAll]:
+) -> list[UserBase]:
     """Get all users from database."""
     validate_user_as_admin(current_user_email=current_user.email)
     users = db.query(Users).all()
@@ -60,11 +61,7 @@ def create_new_user(
     """Create a new product in the database."""
     user_query = db.query(Users).filter(Users.email == new_user.email)
     user = user_query.first()
-    if user is not None:
-        raise HTTPException(
-            status_code=status.HTTP_406_NOT_ACCEPTABLE,
-            detail="user with that email already exists, please use a different email",
-        )
+    does_user_already_exist(user=user)
 
     bcrypt_hasher = Bcrypt()
     hashed_password = bcrypt_hasher.get_hashed_password(new_user.password)

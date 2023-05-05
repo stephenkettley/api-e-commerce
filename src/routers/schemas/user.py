@@ -6,6 +6,7 @@ from src.routers.schemas.basket import BasketProduct
 class UserBase(BaseModel):
     """Pydantic model for showing basic user information."""
 
+    id: int
     name: str
     email: str
     total_spent_overall: float
