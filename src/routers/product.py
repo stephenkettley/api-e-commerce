@@ -96,6 +96,7 @@ def update_unique_product_price(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
     does_product_exist_in_database(product=product)
+
     product_query.update({"price": price.new_price})
     db.commit()
     updated_product = db.query(Products).filter(Products.id == id).first()
@@ -115,6 +116,7 @@ def put_unique_product_on_sale(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
     does_product_exist_in_database(product=product)
+
     product_query.update({"sale_percentage": sale.sale_percentage})
     db.commit()
     updated_product = db.query(Products).filter(Products.id == id).first()
@@ -133,5 +135,6 @@ def delete_unique_product(
     product_query = db.query(Products).filter(Products.id == id)
     product = product_query.first()
     does_product_exist_in_database(product=product)
+
     product_query.delete(synchronize_session=False)
     db.commit()

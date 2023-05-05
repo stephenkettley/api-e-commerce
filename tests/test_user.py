@@ -1,5 +1,4 @@
 from src.routers.schemas.user import UserBase
-from tests.database import client, session
 
 
 def test_create_new_user(client: callable) -> None:
