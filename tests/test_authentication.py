@@ -2,12 +2,11 @@ import os
 
 import jwt
 import pytest
-from fastapi.testclient import TestClient
 
 from src.routers.schemas.authentication import Token
 
 
-def test_correct_user_login(client: TestClient, test_user: callable) -> None:
+def test_correct_user_login(client: callable, test_user: callable) -> None:
     """Tests the logging in of a correct user."""
     response = client.post(
         "/login",
@@ -34,15 +33,15 @@ def test_correct_user_login(client: TestClient, test_user: callable) -> None:
     "email, password, status_code",
     [
         ("wrongemail@gmail.com", "password", 403),
-        ("steve@gmail.com", "wrongpassword", 403),
+        ("stephenkettley@gmail.com", "wrongpassword", 403),
         ("wrongemail@gmail.com", "wrongpassword", 403),
         (None, "password", 422),
-        ("steve@gmail.com", None, 422),
+        ("stephenkettley@gmail.com", None, 422),
     ],
 )
 def test_multiple_incorrect_user_logins(
-    test_user: dict,
-    client: TestClient,
+    test_user: callable,
+    client: callable,
     email: str,
     password: str,
     status_code: int,

@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 
 from main import app
 from src.database.database_connection import Base, get_db
+from src.repository.authentication import create_encoded_jwt_access_token
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:bornfreebeing@localhost/ecommerce_test"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -45,10 +46,44 @@ def client(session: callable) -> TestClient:
 @pytest.fixture
 def test_user(client: TestClient) -> dict:
     """Creates a test user in the database."""
-    user_data = {"name": "Steve", "email": "steve@gmail.com", "password": "password"}
+    user_data = {
+        "name": "Stephen Kettley",
+        "email": "stephenkettley@gmail.com",
+        "password": "password",
+    }
     response = client.post("/user/", json=user_data)
     new_user = response.json()
-    print(new_user)
     new_user["password"] = user_data["password"]
     assert response.status_code == 201
     return new_user
+
+
+@pytest.fixture
+def test_admin(client: TestClient) -> dict:
+    """Creates a test admin user in the database."""
+    user_data = {
+        "name": "useradmin",
+        "email": "useradmin@gmail.com",
+        "password": "useradmin",
+    }
+    response = client.post("/user/", json=user_data)
+    new_user = response.json()
+    new_user["password"] = user_data["password"]
+    assert response.status_code == 201
+    return new_user
+
+
+@pytest.fixture
+def token(test_user: callable) -> dict:
+    """Creates an access token for the purpose of testing."""
+    return create_encoded_jwt_access_token(data={"user_id": test_user["id"]})
+
+
+@pytest.fixture
+def authorized_client(client: callable, token: callable) -> TestClient:
+    """Makes sure that the client gets authorized."""
+    client.headers = {
+        **client.headers,
+        "Authorization": f"Bearer {token}",
+    }
+    return client
