@@ -12,13 +12,7 @@ from src.repository.authentication import (
     validate_user_as_admin,
 )
 from src.repository.user import does_user_already_exist
-from src.routers.schemas.user import (
-    UserAll,
-    UserBase,
-    UserCreate,
-    UserUnique,
-    UserUpdate,
-)
+from src.routers.schemas.user import UserBase, UserCreate, UserUnique, UserUpdate
 
 load_dotenv()
 

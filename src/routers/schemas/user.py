@@ -27,27 +27,6 @@ class UserBase(BaseModel):
         }
 
 
-class UserAll(UserBase):
-    """Pydantic model for showing all users."""
-
-    id: int
-
-    class Config:
-        """ORM config class."""
-
-        orm_mode = True
-
-        schema_extra = {
-            "example": {
-                "name": "Adam Jones",
-                "email": "adamjones@gmail.com",
-                "total_spent_overall": 2500,
-                "coupon_count": 12,
-                "id": 2,
-            }
-        }
-
-
 class UserCreate(BaseModel):
     """Pydantic model for creating a new user."""
 
