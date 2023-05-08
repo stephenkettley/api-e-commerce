@@ -114,3 +114,22 @@ class UserUnique(BaseModel):
                 ],
             }
         }
+
+
+class UserCurrent(BaseModel):
+    """Pydantic model for current logged in user."""
+
+    id: int
+    email: str
+
+    class Config:
+        """ORM config class."""
+
+        orm_mode = True
+
+        schema_extra = {
+            "example": {
+                "id": "2",
+                "email": "tristanbester@gmail.com",
+            }
+        }
