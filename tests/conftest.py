@@ -59,21 +59,6 @@ def test_user(client: TestClient) -> dict:
 
 
 @pytest.fixture
-def test_admin(client: TestClient) -> dict:
-    """Creates a test admin user in the database."""
-    user_data = {
-        "name": "useradmin",
-        "email": "useradmin@gmail.com",
-        "password": "useradmin",
-    }
-    response = client.post("/user/", json=user_data)
-    new_user = response.json()
-    new_user["password"] = user_data["password"]
-    assert response.status_code == 201
-    return new_user
-
-
-@pytest.fixture
 def token(test_user: callable) -> dict:
     """Creates an access token for the purpose of testing."""
     return create_encoded_jwt_access_token(data={"user_id": test_user["id"]})
