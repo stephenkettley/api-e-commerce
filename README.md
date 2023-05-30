@@ -27,5 +27,5 @@ This project is an API built for an e-commerce system that allows for different 
 * Login route (with password verification)
 * JWT access tokens
 * Authentication of routes
-* Very basic testing (pytest)
+* Very basic testing using pytest
 * Dependency injections
