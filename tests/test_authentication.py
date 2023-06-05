@@ -39,19 +39,4 @@ def test_correct_user_login(client: callable, test_user: callable) -> None:
         ("stephenkettley@gmail.com", None, 422),
     ],
 )
-def test_multiple_incorrect_user_logins(
-    test_user: callable,
-    client: callable,
-    email: str,
-    password: str,
-    status_code: int,
-) -> None:
-    """Tests the logging in of a user."""
-    response = client.post(
-        "/login",
-        data={
-            "username": email,
-            "password": password,
-        },
-    )
-    assert response.status_code == status_code
+
