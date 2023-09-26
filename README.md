@@ -2,7 +2,7 @@
 
 ## Description
 
-This project is an API built for an e-commerce system that allows for different users to add/remove products to their baskets, pay for these baskets (including the use of coupons), view detailed informatio about their baskets and also for user information and product information (only by admin) to be updated.
+This project is an API built for an e-commerce system that allows for different users to add/remove products to their baskets, pay for these baskets (including the use of coupons), view detailed information about their baskets and also for user information and product information (only by admin) to be updated.
 
 ## Project Details
 
